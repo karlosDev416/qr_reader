@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:qr_reader/pages/directions_page.dart';
 import 'package:qr_reader/pages/maps_page.dart';
 import 'package:qr_reader/providers/db_provider.dart';
+import 'package:qr_reader/providers/scan_list_provider.dart';
 import 'package:qr_reader/providers/ui_provider.dart';
 import 'package:qr_reader/widgets/custom_navigation_bar.dart';
 import 'package:qr_reader/widgets/scan_button.dart';
@@ -13,9 +14,14 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: Text('Historial'),
+        title: const Text('Historial'),
         actions: [
-          IconButton(onPressed: () {}, icon: Icon(Icons.delete_forever))
+          IconButton(
+              onPressed: () {
+                Provider.of<ScanListProvider>(context, listen: false)
+                    .borrarTodos();
+              },
+              icon: Icon(Icons.delete_forever))
         ],
       ),
       body: _HomePageBody(),
@@ -36,10 +42,15 @@ class _HomePageBody extends StatelessWidget {
     // DBProvider.db.getScanById(1).then((scan) => print(scan?.valor));
     // DBProvider.db.deleteAllScans().then(print);
 
+    final scanListProvider =
+        Provider.of<ScanListProvider>(context, listen: false);
+
     switch (currentIndex) {
       case 0:
+        scanListProvider.cargarScansByTipo('geo');
         return MapsPage();
       case 1:
+        scanListProvider.cargarScansByTipo('http');
         return DirectionsPage();
       default:
         return MapsPage();
